@@ -30,8 +30,8 @@ svg { display: block; }
 .line:nth-child(2) > span { background: linear-gradient(100deg, var(--gold-a), var(--orange) 55%, var(--gold-b)); -webkit-background-clip: text; background-clip: text; color: transparent; padding-bottom: .06em; }
 .in .line > span, body[data-stage="welcome"] #welcome .line > span, body[data-stage="done"] #done .line > span { transform: none; transition: transform 1.1s var(--ease); }
 .line:nth-child(2) > span { transition-delay: .12s !important; }
-#attract .mega, #welcome .mega { text-transform: uppercase; letter-spacing: .01em; }
-#attract .line:nth-child(1) > span, #welcome .line:nth-child(1) > span { font-weight: 300; }
+#attract .mega, #welcome .mega, #done .mega { text-transform: uppercase; letter-spacing: .01em; }
+#attract .line:nth-child(1) > span, #welcome .line:nth-child(1) > span, #done .line:nth-child(1) > span { font-weight: 300; }
 #attract .line:nth-child(2) > span, #welcome .line:nth-child(2) > span { font-weight: 700; }
 .lede { font-size: 40px; font-weight: 300; line-height: 1.4; text-align: center; color: #e7f2ec; }
 
@@ -41,6 +41,7 @@ svg { display: block; }
 body:not([data-stage="attract"]):not([data-stage="boot"]) #logo { top: 44px; left: 56px; width: 300px; transform: none; }
 html[dir="rtl"] body:not([data-stage="attract"]):not([data-stage="boot"]) #logo { left: calc(100% - 356px); }
 body[data-stage="done"] #logo { opacity: 1; }
+body[data-stage="onboard"] #logo { opacity: 0; pointer-events: none; }
 #chrome { position: absolute; top: 44px; inset-inline-end: 48px; display: flex; gap: 14px; z-index: 20; opacity: 0; pointer-events: none; transition: opacity .6s; }
 body[data-stage="welcome"] #chrome, body[data-stage="onboard"] #chrome, body[data-stage="done"] #chrome { opacity: 1; pointer-events: auto; }
 body[data-stage="done"] #exitBtn { display: none; }
@@ -53,7 +54,7 @@ body[data-stage="attract"] #attract { opacity: 1; visibility: visible; transitio
 body.flying #attract .mega, body.flying #attract .attract-sub { opacity: 0; transform: translateY(-70px); transition: opacity .5s, transform .7s var(--ease-io); }
 body.flying #attract .touch { opacity: 0; transform: translateY(70px) scale(.92); transition: opacity .4s, transform .6s var(--ease-io); }
 #attract .mega { position: absolute; left: 0; right: 0; top: 256px; font-size: 104px; letter-spacing: -1px; }
-#attract .line:nth-child(2) > span, #welcome .line:nth-child(2) > span { font-weight: 700; background: none; color: #fff; }
+#attract .line:nth-child(2) > span, #welcome .line:nth-child(2) > span, #done .line:nth-child(2) > span { font-weight: 700; background: none; color: #fff; }
 [dir="rtl"]#attract .mega { font-size: 132px; top: 190px; }
 .attract-sub { position: absolute; left: 60px; right: 60px; top: 518px; text-align: center; font-size: 40px; font-weight: 300; color: #dbece4; opacity: 0; }
 .in .attract-sub { opacity: 1; transition: opacity 1s .55s; }
@@ -314,12 +315,41 @@ h3.center, .center { text-align: center; }
 @keyframes dot { 60% { transform: rotate(var(--a)) translateY(-78px) scale(1.2); } 100% { transform: rotate(var(--a)) translateY(-72px) scale(1); } }
 .sr { margin-top: 14px; padding: 7px 14px; border-radius: 16px; background: #E6F1FA; color: var(--blue); font-size: 15.3px; font-weight: 400; animation: rowIn .6s var(--ease) 1.2s both; }
 
+/* Icons stay gently alive. The NBE logo and emblem are never animated. */
+.view { --dir: 1; }
+.view[dir="rtl"] { --dir: -1; }
+.ill, .card-wrap { animation: illFloat 5s ease-in-out infinite; }
+.view.entering .ill, .view.entering .card-wrap { animation: illIn .9s var(--spring) .18s both, illFloat 5s ease-in-out 1.1s infinite; }
+@keyframes illFloat { 50% { translate: 0 -5px; } }
+.btn .chev { animation: chevNudge 1.8s ease-in-out infinite; }
+.btn.off .chev { animation: none; }
+@keyframes chevNudge { 50% { translate: calc(var(--dir) * 4px) 0; } }
+.round svg { animation: backNudge 2.4s ease-in-out infinite; }
+@keyframes backNudge { 50% { translate: calc(var(--dir) * -2px) 0; } }
+.lang-pill .ico svg { animation: globeSpin 14s linear infinite; }
+@keyframes globeSpin { to { rotate: 1turn; } }
+.face .f-corners { transform-box: fill-box; transform-origin: center; animation: faceCorners 2.4s ease-in-out infinite; }
+@keyframes faceCorners { 50% { scale: .9; } }
+.face .f-scan { animation: faceScan 2.4s ease-in-out infinite; }
+@keyframes faceScan { 0%, 100% { translate: 0 10px; opacity: 0; } 15%, 85% { opacity: .9; } 50% { translate: 0 35px; } }
+.scan .ico { animation: iconPulse 2.6s ease-in-out infinite; }
+@keyframes iconPulse { 50% { scale: 1.14; } }
+.tile .ico { animation: iconBob 3s ease-in-out calc(var(--i) * .35s) infinite; }
+@keyframes iconBob { 0%, 60%, 100% { translate: 0 0; } 30% { translate: 0 -4px; } }
+.doc-list .ico { animation: iconTilt 4s ease-in-out calc(.9s + var(--i) * .5s) infinite; }
+@keyframes iconTilt { 0%, 40%, 100% { rotate: 0deg; scale: 1; } 12% { rotate: -9deg; scale: 1.1; } 26% { rotate: 7deg; scale: 1.1; } }
+.ico.sm { animation: pinDrop 2.2s ease-in-out infinite; }
+@keyframes pinDrop { 0%, 55%, 100% { translate: 0 0; } 25% { translate: 0 -4px; } }
+.mini svg { animation: plusTurn 4s ease-in-out infinite; }
+@keyframes plusTurn { 0%, 60%, 100% { rotate: 0deg; } 80% { rotate: 90deg; } }
+.select.hint .down { animation: iconBob 1.6s ease-in-out infinite; }
+
 .toast { position: absolute; left: 50%; bottom: 96px; max-width: 300px; padding: 10px 18px; border-radius: 20px; transform: translateX(-50%); background: #16271f; color: #fff; font-size: 13.6px; white-space: nowrap; z-index: 20; animation: toast 1.9s var(--ease) both; }
 @keyframes toast { 0% { opacity: 0; transform: translate(-50%, 10px); } 12%, 85% { opacity: 1; transform: translate(-50%, 0); } 100% { opacity: 0; transform: translate(-50%, -6px); } }
 
 /* 3 Onboarding frame */
 body[data-stage="onboard"] #onboard { opacity: 1; visibility: visible; transition: opacity .8s .35s; }
-.caption { position: absolute; top: 142px; inset-inline-start: 56px; width: 700px; z-index: 5; }
+.caption { position: absolute; top: 112px; inset-inline-start: 56px; width: 700px; z-index: 5; }
 .caption h2 { font-size: 58px; font-weight: 600; line-height: 1.12; }
 [dir="rtl"] .caption h2 { letter-spacing: 0; line-height: 1.3; font-size: 56px; }
 .caption.swap h2 { animation: capIn .8s var(--ease) both; }
@@ -337,7 +367,7 @@ body[data-stage="onboard"] #onboard { opacity: 1; visibility: visible; transitio
 
 /* 4 Completion */
 body[data-stage="done"] #done { opacity: 1; visibility: visible; transition: opacity .9s .55s; }
-#done .mega { position: absolute; left: 30px; right: 30px; top: 500px; font-size: 104px; }
+#done .mega { position: absolute; left: 30px; right: 30px; top: 500px; font-size: 104px; letter-spacing: -1px; }
 [dir="rtl"]#done .mega { top: 480px; font-size: 96px; }
 #done .lede { position: absolute; left: 80px; right: 80px; top: 745px; font-size: 38px; opacity: 0; transform: translateY(20px); }
 body[data-stage="done"] #done .lede { opacity: 1; transform: none; transition: all .9s var(--ease) 1.1s; }

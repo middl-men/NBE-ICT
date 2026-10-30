@@ -166,10 +166,10 @@
     const moved = world.handoff(1500);
     await new Promise(r => setTimeout(r, 420));
     setStage('welcome'); // the phone starts rising as the emblem sinks
+    busy = false; arm(); // Get Started works as soon as it appears
     await moved;
-    world.jump('welcome');
+    if (stage !== 'attract') world.jump(stage);
     document.body.classList.remove('flying');
-    busy = false; arm();
   }
 
   function toOnboard() {

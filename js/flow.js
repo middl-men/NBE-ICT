@@ -58,13 +58,13 @@ window.NBEFlow = (function () {
           <div class="brand">${opts.logoSvg()}</div>
           <button class="field" data-act="inapp" type="button"><span class="ph">${p.userId}</span></button>
           <button class="link start" data-act="inapp" type="button">${p.trouble}</button>
-          <button class="face" data-act="inapp" type="button" aria-label="Face ID"><svg viewBox="0 0 56 56" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="square"><path d="M6 17V6h11M39 6h11v11M50 39v11H39M17 50H6V39"/><path d="M19 21v5M37 21v5M28 20v10.500c0 1.500-1 2.500-3 2.500M18 39c6 4 14 4 20 0" stroke-linecap="round"/></svg></button>
+          <button class="face" data-act="inapp" type="button" aria-label="Face ID"><svg viewBox="0 0 56 56" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="square"><path class="f-corners" d="M6 17V6h11M39 6h11v11M50 39v11H39M17 50H6V39"/><rect class="f-scan" x="13" y="0" width="30" height="2" rx="1" fill="currentColor" stroke="none"/><path d="M19 21v5M37 21v5M28 20v10.500c0 1.500-1 2.500-3 2.500M18 39c6 4 14 4 20 0" stroke-linecap="round"/></svg></button>
           <button class="btn" data-act="inapp" type="button"><span>${p.login}</span></button>
           <button class="btn orange" data-act="next" data-primary type="button"><span>${p.register}</span></button>
           <button class="link scan" data-act="inapp" type="button"><span class="ico">${ICONS.qr}</span>${p.scan}</button>
           <button class="link dark" data-act="inapp" type="button">${p.track}</button>
           <div class="tiles">
-            ${[ICONS.cal, ICONS.pin, ICONS.fx, ICONS.fx].map((ic, i) => `<button class="tile" data-act="inapp" type="button"><span class="ico">${ic}</span><span>${p.tiles[i]}</span></button>`).join('')}
+            ${[ICONS.cal, ICONS.pin, ICONS.fx, ICONS.fx].map((ic, i) => `<button class="tile" data-act="inapp" type="button" style="--i:${i}"><span class="ico">${ic}</span><span>${p.tiles[i]}</span></button>`).join('')}
           </div>
         </div>`; },
       // 1 Documents
@@ -259,7 +259,7 @@ window.NBEFlow = (function () {
           el.style.setProperty('--in', `${100 * sign}%`);
           old.classList.add('leaving'); el.classList.add('entering');
           setTimeout(() => old.remove(), 640);
-          setTimeout(() => el.classList.remove('entering'), 660);
+          setTimeout(() => el.classList.remove('entering'), 1150); // after the illustration lands
         } else old.remove();
       }
       sync(true); // a new screen always opens at its top

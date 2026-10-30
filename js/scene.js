@@ -239,7 +239,7 @@ window.NBEScene = (function () {
 
       if (flying) {
         // The emblem, always whole, sinks while the phone rises to take its place.
-        const u = Math.min((time - flying.t0) / flying.dur, 1);
+        const u = Math.min((performance.now() - flying.t0) / flying.dur, 1); // real time, so slow screens don't stretch it
         const sink = easeInOut(u);
         pose.emY = flying.y0 + (POSES.welcome.emY - flying.y0) * sink;
         pose.sway = damp(pose.sway, 0, 5, dt);
@@ -324,7 +324,7 @@ window.NBEScene = (function () {
       /* The emblem sinks away, handing the stage to the phone. */
       handoff(dur) {
         return new Promise(res => {
-          flying = { t0: time, dur: (dur || 1500) / 1000, y0: pose.emY, done: res };
+          flying = { t0: performance.now(), dur: dur || 1500, y0: pose.emY, done: res };
         });
       },
       jump(name) { Object.assign(pose, POSES[name]); target = POSES[name]; },
