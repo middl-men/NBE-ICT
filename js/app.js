@@ -71,7 +71,7 @@
   let stage = 'boot', busy = false;
   let attractTimer = 0, attractLang = lang;
 
-  const FLYERS = [null, 'docs', 'id', 'email', 'phone', null, 'bank', 'card', null];
+  const FLYERS = [null, 'docs-icon', 'id', 'email', 'phone', null, 'bank', 'card', null];
 
   const flow = window.NBEFlow.create({
     logoSvg, markSvg, sound,
