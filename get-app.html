@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Get NBE Mobile</title>
+<style>
+  body { margin: 0; min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; padding: 24px; box-sizing: border-box; font-family: system-ui, -apple-system, "Segoe UI", sans-serif; color: #222; background: #fff; text-align: center; }
+  h1 { margin: 0 0 10px; font-size: 22px; font-weight: 600; }
+  a { width: 100%; max-width: 300px; padding: 15px 0; border-radius: 26px; background: #00643E; color: #fff; font-size: 16px; text-decoration: none; }
+</style>
+</head>
+<body>
+  <h1 id="msg">Get NBE Mobile</h1>
+  <a id="apple" href="https://apps.apple.com/eg/app/nbe-mobile/id1596302687">App Store</a>
+  <a id="play" href="https://play.google.com/store/apps/details?id=com.ofss.obdx.and.nbe.com.eg">Google Play</a>
+  <script src="config.js"></script>
+  <script>
+    /* The booth QR code opens this page. It sends each phone to its own store. */
+    function storeFor(ua, touchPoints) {
+      if (/android/i.test(ua)) return 'play';
+      // iPads identify themselves as Macs, but Macs have no touchscreen
+      if (/iphone|ipad|ipod/i.test(ua) || (/macintosh/i.test(ua) && touchPoints > 1)) return 'apple';
+      return null;
+    }
+    var cfg = window.NBE_CONFIG || {};
+    if (cfg.appStoreUrl) document.getElementById('apple').href = cfg.appStoreUrl;
+    if (cfg.playStoreUrl) document.getElementById('play').href = cfg.playStoreUrl;
+    var store = storeFor(navigator.userAgent, navigator.maxTouchPoints || 0);
+    if (store) {
+      document.getElementById('msg').textContent = 'Opening the store…';
+      location.replace(document.getElementById(store).href);
+    }
+  </script>
+</body>
+</html>

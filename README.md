@@ -11,10 +11,14 @@ Open `index.html` in Chrome or Edge in full-screen kiosk mode, for example:
 On any other screen size the stage scales to fit, so it can be previewed on a laptop.
 
 ## Change the settings
-- Edit `config.js`: store links, idle times, volume.
+- Edit `config.js`: QR link, store links, idle times, volume.
 - Or at the booth: press and hold the NBE logo for 3 seconds to open the settings panel.
   Saved values stay on that device.
-- Or for a quick test, use the URL: `index.html?smart=https://example.org&sound=0`
+- Or for a quick test, use the URL: `index.html?qr=https://example.org&sound=0`
+
+## QR code
+The QR code opens `get-app.html`, which sends Android phones to Google Play and
+iPhones to the App Store. That page must stay online at the address in `qrUrl`.
 
 ## Arabic
 Off for now. To bring it back, set `arabicEnabled: true` in `config.js`.
