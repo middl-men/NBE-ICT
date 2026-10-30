@@ -20,6 +20,10 @@ On any other screen size the stage scales to fit, so it can be previewed on a la
 The QR code opens `get-app.html`, which sends Android phones to Google Play and
 iPhones to the App Store. That page must stay online at the address in `qrUrl`.
 
+## Publishing a change
+Browsers keep the site's files for up to 10 minutes. Raise the `?v=` number on the
+stylesheet and scripts in `index.html` with each release so visitors get the new files.
+
 ## Arabic
 Off for now. To bring it back, set `arabicEnabled: true` in `config.js`.
 The right-to-left layout and translations in `js/i18n.js` have not been reviewed yet.
