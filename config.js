@@ -6,12 +6,8 @@
  */
 window.NBE_CONFIG = {
   // What the QR code on the Completion stage opens. get-app.html sends Android
-  // phones to Google Play and iPhones to the App Store.
+  // phones to Google Play and iPhones to the App Store. The store links are in that file.
   qrUrl: "https://middl-men.github.io/NBE-ICT/get-app.html",
-
-  // Where get-app.html sends each phone.
-  appStoreUrl: "https://apps.apple.com/eg/app/nbe-mobile/id1596302687",
-  playStoreUrl: "https://play.google.com/store/apps/details?id=com.ofss.obdx.and.nbe.com.eg",
 
   // Seconds without a touch before "Still there?" appears on Welcome and Onboarding.
   idleSeconds: 45,

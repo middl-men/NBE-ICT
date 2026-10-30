@@ -40,8 +40,7 @@ svg { display: block; }
 #logo img { width: 100%; height: auto; }
 body:not([data-stage="attract"]):not([data-stage="boot"]) #logo { top: 44px; left: 56px; width: 300px; transform: none; }
 html[dir="rtl"] body:not([data-stage="attract"]):not([data-stage="boot"]) #logo { left: calc(100% - 356px); }
-body[data-stage="done"] #logo { opacity: 1; }
-body[data-stage="onboard"] #logo { opacity: 0; pointer-events: none; }
+body[data-stage="onboard"] #logo, body[data-stage="done"] #logo { opacity: 0; pointer-events: none; }
 #chrome { position: absolute; top: 44px; inset-inline-end: 48px; display: flex; gap: 14px; z-index: 20; opacity: 0; pointer-events: none; transition: opacity .6s; }
 body[data-stage="welcome"] #chrome, body[data-stage="onboard"] #chrome, body[data-stage="done"] #chrome { opacity: 1; pointer-events: auto; }
 body[data-stage="done"] #exitBtn { display: none; }
@@ -106,8 +105,6 @@ body[data-stage="done"] #phoneRig { opacity: 0; transform: perspective(2600px) t
 .view.leaving { animation: vOut .62s var(--ease-io) both; z-index: 1; pointer-events: none; }
 @keyframes vIn { from { transform: translateX(var(--in)); } to { transform: none; } }
 @keyframes vOut { to { transform: translateX(var(--out)); filter: brightness(.82); } }
-.view.entering .ill, .view.entering .card-wrap { animation: illIn .9s var(--spring) .18s both; }
-@keyframes illIn { from { transform: translateY(18px) scale(.72) rotate(-4deg); opacity: 0; } to { transform: none; opacity: 1; } }
 
 /* In-phone components, measured from the design */
 .scr { position: absolute; inset: 0; display: flex; flex-direction: column; background: #fff; }
@@ -207,14 +204,13 @@ h3.center, .center { text-align: center; }
 
 /* Documents */
 .docs-hero { position: relative; height: 313px; overflow: hidden; flex: none; color: #fff; }
-.docs-hero img { width: 100%; height: 100%; object-fit: cover; animation: heroZoom 9s ease-out both; }
-@keyframes heroZoom { from { transform: scale(1.09); } to { transform: none; } }
+.docs-hero img { width: 100%; height: 100%; object-fit: cover }
 .docs-hero .round { position: absolute; top: 57px; inset-inline-start: 16px; }
 .docs-title { position: absolute; left: 12px; right: 12px; bottom: 25px; text-align: center; font-size: 25.6px; line-height: 29px; text-shadow: 0 2px 18px #0006; }
 .docs-title b { display: block; font-weight: 600; } .docs-title span { font-weight: 400; }
 [dir="rtl"] .docs-title { letter-spacing: 0; line-height: 1.35; font-size: 24px; }
 .doc-list { list-style: none; padding: 26px 16px 8px; flex: none; }
-.doc-list li { display: flex; align-items: center; gap: 13px; height: 40px; font-size: 14.2px; color: var(--grey); animation: rowIn .6s var(--ease) calc(.25s + var(--i) * .09s) both; }
+.doc-list li { display: flex; align-items: center; gap: 13px; height: 40px; font-size: 14.2px; color: var(--grey) }
 @keyframes rowIn { from { opacity: 0; transform: translateX(14px); } to { opacity: 1; transform: none; } }
 .doc-list .ico { width: 30px; height: 30px; color: var(--orange); }
 .docs .pad { margin-top: 14px; }
@@ -315,35 +311,6 @@ h3.center, .center { text-align: center; }
 @keyframes dot { 60% { transform: rotate(var(--a)) translateY(-78px) scale(1.2); } 100% { transform: rotate(var(--a)) translateY(-72px) scale(1); } }
 .sr { margin-top: 14px; padding: 7px 14px; border-radius: 16px; background: #E6F1FA; color: var(--blue); font-size: 15.3px; font-weight: 400; animation: rowIn .6s var(--ease) 1.2s both; }
 
-/* Icons stay gently alive. The NBE logo and emblem are never animated. */
-.view { --dir: 1; }
-.view[dir="rtl"] { --dir: -1; }
-.ill, .card-wrap { animation: illFloat 5s ease-in-out infinite; }
-.view.entering .ill, .view.entering .card-wrap { animation: illIn .9s var(--spring) .18s both, illFloat 5s ease-in-out 1.1s infinite; }
-@keyframes illFloat { 50% { translate: 0 -5px; } }
-.btn .chev { animation: chevNudge 1.8s ease-in-out infinite; }
-.btn.off .chev { animation: none; }
-@keyframes chevNudge { 50% { translate: calc(var(--dir) * 4px) 0; } }
-.round svg { animation: backNudge 2.4s ease-in-out infinite; }
-@keyframes backNudge { 50% { translate: calc(var(--dir) * -2px) 0; } }
-.lang-pill .ico svg { animation: globeSpin 14s linear infinite; }
-@keyframes globeSpin { to { rotate: 1turn; } }
-.face .f-corners { transform-box: fill-box; transform-origin: center; animation: faceCorners 2.4s ease-in-out infinite; }
-@keyframes faceCorners { 50% { scale: .9; } }
-.face .f-scan { animation: faceScan 2.4s ease-in-out infinite; }
-@keyframes faceScan { 0%, 100% { translate: 0 10px; opacity: 0; } 15%, 85% { opacity: .9; } 50% { translate: 0 35px; } }
-.scan .ico { animation: iconPulse 2.6s ease-in-out infinite; }
-@keyframes iconPulse { 50% { scale: 1.14; } }
-.tile .ico { animation: iconBob 3s ease-in-out calc(var(--i) * .35s) infinite; }
-@keyframes iconBob { 0%, 60%, 100% { translate: 0 0; } 30% { translate: 0 -4px; } }
-.doc-list .ico { animation: iconTilt 4s ease-in-out calc(.9s + var(--i) * .5s) infinite; }
-@keyframes iconTilt { 0%, 40%, 100% { rotate: 0deg; scale: 1; } 12% { rotate: -9deg; scale: 1.1; } 26% { rotate: 7deg; scale: 1.1; } }
-.ico.sm { animation: pinDrop 2.2s ease-in-out infinite; }
-@keyframes pinDrop { 0%, 55%, 100% { translate: 0 0; } 25% { translate: 0 -4px; } }
-.mini svg { animation: plusTurn 4s ease-in-out infinite; }
-@keyframes plusTurn { 0%, 60%, 100% { rotate: 0deg; } 80% { rotate: 90deg; } }
-.select.hint .down { animation: iconBob 1.6s ease-in-out infinite; }
-
 .toast { position: absolute; left: 50%; bottom: 96px; max-width: 300px; padding: 10px 18px; border-radius: 20px; transform: translateX(-50%); background: #16271f; color: #fff; font-size: 13.6px; white-space: nowrap; z-index: 20; animation: toast 1.9s var(--ease) both; }
 @keyframes toast { 0% { opacity: 0; transform: translate(-50%, 10px); } 12%, 85% { opacity: 1; transform: translate(-50%, 0); } 100% { opacity: 0; transform: translate(-50%, -6px); } }
 
@@ -355,7 +322,7 @@ body[data-stage="onboard"] #onboard { opacity: 1; visibility: visible; transitio
 [dir="rtl"] .caption h2 { letter-spacing: 0; line-height: 1.3; font-size: 56px; }
 .caption.swap h2 { animation: capIn .8s var(--ease) both; }
 @keyframes capIn { from { opacity: 0; transform: translateY(30px); clip-path: inset(0 0 100% 0); } to { opacity: 1; transform: none; clip-path: inset(-10% 0 -10% 0); } }
-#flyer { position: absolute; top: 26px; left: 50%; width: 236px; height: 236px; margin-left: -118px; object-fit: contain; z-index: 4; opacity: 0; transform: translate3d(0, 150px, 0) scale(.45) rotate(-10deg); filter: drop-shadow(0 22px 30px #0009); pointer-events: none; }
+#flyer { position: absolute; top: 112px; left: 50%; width: 320px; height: 320px; margin-left: -160px; object-fit: contain; z-index: 5; opacity: 0; transform: translate3d(0, 130px, 0) scale(.8); filter: drop-shadow(0 22px 30px #0009); pointer-events: none; }
 #flyer.show { opacity: 1; transform: none; transition: transform 1.2s var(--spring), opacity .4s; animation: bob 7s ease-in-out 1.2s infinite; }
 @keyframes bob { 0%, 100% { translate: 0 0; rotate: 0deg; } 50% { translate: 0 -16px; rotate: 2.500deg; } }
 .track-wrap { position: absolute; left: 56px; right: 56px; bottom: 58px; }
