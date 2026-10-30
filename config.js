@@ -2,11 +2,16 @@
  * Booth settings. Edit here, or on the kiosk itself:
  * press and hold the NBE logo for 3 seconds to open the settings panel.
  * Values saved in the panel are stored on that device and override this file.
- * URL overrides also work: index.html?qr=https://...&lang=ar&sound=0
+ * URL overrides also work: index.html?smart=https://...&lang=ar&sound=0
  */
 window.NBE_CONFIG = {
-  // Where the QR code on the Completion stage sends visitors.
-  qrUrl: "https://www.nbe.com.eg/",
+  // Where the QR codes on the Completion stage send visitors.
+  appStoreUrl: "https://apps.apple.com/eg/app/nbe-mobile/id1596302687",
+  playStoreUrl: "https://play.google.com/store/apps/details?id=com.ofss.obdx.and.nbe.com.eg",
+
+  // Optional. A link that detects the phone and opens the right store. When set,
+  // the Completion stage shows this one QR code instead of the two store codes.
+  smartLinkUrl: "",
 
   // Seconds without a touch before "Still there?" appears on Welcome and Onboarding.
   idleSeconds: 45,

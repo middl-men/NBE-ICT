@@ -2,7 +2,8 @@
 <html lang="en" dir="ltr">
 <head>
 <meta charset="utf-8">
-<title>NBE Mobile Experience</title>
+<title>NBE at ICT 2026</title>
+<link rel="icon" type="image/png" href="assets/img/favicon.png">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 <link rel="stylesheet" href="css/app.css">
 </head>
@@ -65,11 +66,7 @@
   <section id="done" class="layer">
     <h1 class="mega" id="doneTitle"></h1>
     <p class="lede" id="doneSub"></p>
-    <div class="qr-frame">
-      <i class="c tl"></i><i class="c tr"></i><i class="c bl"></i><i class="c br"></i>
-      <div class="qr" id="qr"></div>
-      <div class="beam"></div>
-    </div>
+    <div class="qr-row" id="qrRow"></div>
     <div class="scan-label" id="doneScan"></div>
     <button class="ghost-btn" id="restart" type="button">
       <svg viewBox="0 0 48 48" class="timer" aria-hidden="true"><circle cx="24" cy="24" r="21"/><circle id="restartRing" cx="24" cy="24" r="21" pathLength="100"/></svg>
@@ -84,8 +81,6 @@
     <button class="pill" id="exitBtn" type="button"></button>
   </div>
 
-  <div id="flash" aria-hidden="true"></div>
-
   <!-- Inactivity -->
   <div id="idle">
     <div class="idle-ring">
@@ -99,7 +94,9 @@
   <!-- Staff settings: hold the logo for 3 seconds -->
   <form id="admin" autocomplete="off">
     <h3>Booth settings</h3>
-    <label>QR code URL<input id="aQr" type="url" dir="ltr" required></label>
+    <label>App Store link<input id="aApple" type="url" dir="ltr" required></label>
+    <label>Google Play link<input id="aPlay" type="url" dir="ltr" required></label>
+    <label>Smart link (optional: one QR that detects the phone)<input id="aSmart" type="url" dir="ltr"></label>
     <div class="row">
       <label>Idle (sec)<input id="aIdle" type="number" min="10" max="600" required></label>
       <label>Countdown (sec)<input id="aCount" type="number" min="3" max="60" required></label>
