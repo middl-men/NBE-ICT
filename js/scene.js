@@ -7,11 +7,11 @@ window.NBEScene = (function () {
   const T = window.THREE;
 
   const POSES = {
-    //         camera      emblem position / scale   sway  gate open  ambience
-    attract: { camZ: 14, camY: 0, emX: 0, emY: -.2, emZ: 0, emS: .5, sway: 1, split: 0, glow: 1, energy: .85, gold: .45, reflect: 1, lum: 1 },
-    welcome: { camZ: 14, camY: 0, emX: 0, emY: -12, emZ: -11, emS: 1.9, sway: .25, split: 2.4, glow: .8, energy: .75, gold: .7, reflect: 0, lum: .7 },
-    onboard: { camZ: 14, camY: 0, emX: 0, emY: -12, emZ: -11, emS: 1.9, sway: .08, split: 2.4, glow: .4, energy: .72, gold: .3, reflect: 0, lum: .22 },
-    done:    { camZ: 14, camY: 0, emX: 0, emY: 2.78, emZ: 0, emS: .3, sway: .5, split: 0, glow: 1.2, energy: 1, gold: 1, reflect: 0, lum: 1 }
+    //         camera      emblem position / scale   sway  ambience
+    attract: { camZ: 14, camY: 0, emX: 0, emY: -.2, emZ: 0, emS: .5, sway: 1, glow: 1, energy: .85, gold: .45, reflect: 1, lum: 1 },
+    welcome: { camZ: 14, camY: 0, emX: 0, emY: -12, emZ: -11, emS: 1.9, sway: .25, glow: .8, energy: .75, gold: .7, reflect: 0, lum: .7 },
+    onboard: { camZ: 14, camY: 0, emX: 0, emY: -12, emZ: -11, emS: 1.9, sway: .08, glow: .4, energy: .72, gold: .3, reflect: 0, lum: .22 },
+    done:    { camZ: 14, camY: 0, emX: 0, emY: 2.78, emZ: 0, emS: .3, sway: .5, glow: 1.2, energy: 1, gold: 1, reflect: 0, lum: 1 }
   };
 
   const damp = (a, b, lambda, dt) => a + (b - a) * (1 - Math.exp(-lambda * dt));
@@ -211,7 +211,7 @@ window.NBEScene = (function () {
           vec3 c=mix(vec3(1.,.72,.3),vec3(.5,1.,.78),step(.78,g));
           gl_FragColor=vec4(c,s*a*.62*bright);}`
     }));
-    dust.frustumCulled = false; scene.add(dust);
+    dust.frustumCulled = false; dust.visible = false; scene.add(dust); // hidden for now
 
     /* Celebration */
     const CN = 340;
@@ -229,17 +229,6 @@ window.NBEScene = (function () {
     const clock = new T.Clock();
     let time = 0, lift = 0, fpsT = 0, fpsN = 0;
 
-    function applySplit(root, s) {
-      const q = Math.min(s, 1), e = q * q * (3 - 2 * q), far = Math.max(0, s - 1);
-      const n = root.parts;
-      n.bowl.position.set(0, e * 2.1 + far * 3, e * .3);
-      n.p1.position.set(-e * 2.2 - far * 3, -e * .5, 0);
-      n.p2.position.set(0, -e * 3.2 - far * 3, 0);
-      n.p3.position.set(e * 2.2 + far * 3, -e * .5, 0);
-      const hide = s < 2.2;
-      n.bowl.visible = n.p1.visible = n.p2.visible = n.p3.visible = hide;
-    }
-
     function frame() {
       requestAnimationFrame(frame);
       const dt = Math.min(clock.getDelta(), .05);
@@ -249,11 +238,9 @@ window.NBEScene = (function () {
       if (!flying) for (const k in target) pose[k] = damp(pose[k], target[k], rate, dt);
 
       if (flying) {
-        // The emblem opens and sinks while the phone rises to take its place.
+        // The emblem, always whole, sinks while the phone rises to take its place.
         const u = Math.min((time - flying.t0) / flying.dur, 1);
-        const open = easeInOut(Math.min(u / .45, 1));
-        const sink = easeIn(Math.max(0, (u - .18) / .82));
-        pose.split = open * 1.2;
+        const sink = easeInOut(u);
         pose.emY = flying.y0 + (POSES.welcome.emY - flying.y0) * sink;
         pose.sway = damp(pose.sway, 0, 5, dt);
         pose.reflect = damp(pose.reflect, 0, 7, dt);
@@ -277,12 +264,11 @@ window.NBEScene = (function () {
       spin = damp(spin, 0, 2.2, dt);
       emblem.rotation.y = Math.sin(time * .35) * .32 * pose.sway + spin;
       emblem.rotation.x = Math.sin(time * .23) * .04 * pose.sway;
-      applySplit(front, pose.split); applySplit(mirror, pose.split);
       mirror.visible = pose.reflect > .02;
       refGold.opacity = refEm.opacity = .16 * pose.reflect;
 
       emerald.envMapIntensity = 1.05 * pose.lum; emerald.color.setHex(0x00805a).multiplyScalar(.4 + .6 * pose.lum); key.intensity = .4 * pose.lum;
-      inner.intensity = 7 * pose.glow * (1 - Math.min(pose.split, 1) * .7);
+      inner.intensity = 7 * pose.glow;
       glowMat.opacity = .85 * pose.glow * (1 + Math.sin(time * .9) * .08);
       glow.material.rotation = time * .02;
       beams.forEach(b => {
@@ -335,7 +321,7 @@ window.NBEScene = (function () {
         target = POSES[name]; rate = speed || 1.6;
         if (name === 'done') { spin = Math.PI * 4; }
       },
-      /* The gate opens and sinks away, handing the stage to the phone. */
+      /* The emblem sinks away, handing the stage to the phone. */
       handoff(dur) {
         return new Promise(res => {
           flying = { t0: time, dur: (dur || 1500) / 1000, y0: pose.emY, done: res };

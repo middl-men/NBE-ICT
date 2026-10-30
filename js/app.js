@@ -9,7 +9,7 @@
   let cfg = Object.assign({}, defaults);
   try { Object.assign(cfg, JSON.parse(localStorage.getItem(STORE) || '{}')); } catch (e) {}
   const q = new URLSearchParams(location.search);
-  if (q.get('smart')) cfg.smartLinkUrl = q.get('smart');
+  if (q.get('qr')) cfg.qrUrl = q.get('qr');
   if (q.get('lang')) cfg.defaultLang = q.get('lang');
   if (q.get('sound')) cfg.soundVolume = +q.get('sound');
   if (!cfg.arabicEnabled) cfg.defaultLang = 'en';
@@ -225,10 +225,7 @@
     </svg>`;
   }
   function renderQr() {
-    const smart = (cfg.smartLinkUrl || '').trim();
-    const codes = smart ? [{ url: smart }] : [{ url: cfg.appStoreUrl, label: 'App Store' }, { url: cfg.playStoreUrl, label: 'Google Play' }];
-    $('qrRow').classList.toggle('single', !!smart);
-    $('qrRow').innerHTML = codes.map(c => `<figure class="qr-frame"><i class="c tl"></i><i class="c tr"></i><i class="c bl"></i><i class="c br"></i><div class="qr">${qrSvg(c.url)}</div><div class="beam"></div>${c.label ? `<figcaption>${c.label}</figcaption>` : ''}</figure>`).join('');
+    $('qrRow').innerHTML = `<figure class="qr-frame"><i class="c tl"></i><i class="c tr"></i><i class="c bl"></i><i class="c br"></i><div class="qr">${qrSvg(cfg.qrUrl)}</div><div class="beam"></div></figure>`;
   }
 
   /* ---- inactivity ---- */
@@ -289,7 +286,7 @@
   $('logo').addEventListener('pointerdown', () => { holdT = setTimeout(openAdmin, 3000); });
   ['pointerup', 'pointerleave', 'pointercancel'].forEach(ev => $('logo').addEventListener(ev, () => clearTimeout(holdT)));
   function openAdmin() {
-    $('aApple').value = cfg.appStoreUrl; $('aPlay').value = cfg.playStoreUrl; $('aSmart').value = cfg.smartLinkUrl || ''; $('aIdle').value = cfg.idleSeconds; $('aCount').value = cfg.idleCountdownSeconds;
+    $('aQr').value = cfg.qrUrl; $('aIdle').value = cfg.idleSeconds; $('aCount').value = cfg.idleCountdownSeconds;
     $('aDone').value = cfg.completionSeconds; $('aVol').value = cfg.soundVolume; $('aLang').value = cfg.defaultLang;
     $('admin').classList.add('on'); clearTimeout(idleT);
   }
@@ -297,7 +294,7 @@
   $('aReset').addEventListener('click', () => { try { localStorage.removeItem(STORE); } catch (e) {} cfg = Object.assign({}, defaults); openAdmin(); });
   $('admin').addEventListener('submit', e => {
     e.preventDefault();
-    const saved = { appStoreUrl: $('aApple').value.trim(), playStoreUrl: $('aPlay').value.trim(), smartLinkUrl: $('aSmart').value.trim(), idleSeconds: +$('aIdle').value, idleCountdownSeconds: +$('aCount').value, completionSeconds: +$('aDone').value, soundVolume: +$('aVol').value, defaultLang: $('aLang').value };
+    const saved = { qrUrl: $('aQr').value.trim(), idleSeconds: +$('aIdle').value, idleCountdownSeconds: +$('aCount').value, completionSeconds: +$('aDone').value, soundVolume: +$('aVol').value, defaultLang: $('aLang').value };
     Object.assign(cfg, saved);
     try { localStorage.setItem(STORE, JSON.stringify(saved)); } catch (err) {}
     $('admin').classList.remove('on');
