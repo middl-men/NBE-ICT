@@ -9,7 +9,7 @@
   let cfg = Object.assign({}, defaults);
   try { Object.assign(cfg, JSON.parse(localStorage.getItem(STORE) || '{}')); } catch (e) {}
   const q = new URLSearchParams(location.search);
-  if (q.get('qr')) cfg.qrUrl = q.get('qr');
+  if (q.get('smart')) cfg.smartLinkUrl = q.get('smart');
   if (q.get('lang')) cfg.defaultLang = q.get('lang');
   if (q.get('sound')) cfg.soundVolume = +q.get('sound');
   if (!cfg.arabicEnabled) cfg.defaultLang = 'en';
@@ -52,7 +52,7 @@
       if (kind === 'deny') tone(190, 0, .13, .22, 'sine', 150);
       if (kind === 'step') tone(330, 0, .32, .13, 'sine', 660);
       if (kind === 'ping') { tone(1180, 0, .16, .15); tone(1570, .09, .24, .13); }
-      if (kind === 'fly') { tone(70, 0, 1.8, .55, 'sawtooth', 620); tone(140, .3, 1.5, .2, 'sine', 1400); }
+      if (kind === 'rise') { tone(196, 0, 1.3, .3, 'sine', 392); tone(392, .25, 1.1, .14, 'sine', 784); }
       if (kind === 'win') [523, 659, 784, 1047, 1319].forEach((f, i) => tone(f, i * .09, .9, .17, 'triangle'));
     } catch (e) {}
   }
@@ -62,7 +62,7 @@
   if (!scene) { document.body.classList.add('no-gl'); $('flatEmblem').innerHTML = markSvg(); }
   else scene.start();
   const world = {
-    goto: (n, r) => scene && scene.goto(n, r), fly: d => scene ? scene.fly(d) : new Promise(r => setTimeout(r, d * .6)),
+    goto: (n, r) => scene && scene.goto(n, r), handoff: d => scene ? scene.handoff(d) : new Promise(r => setTimeout(r, d * .6)),
     burst: () => scene && scene.burst(), tint: v => scene && scene.tint(v), pulse: () => scene && scene.pulse(), jump: n => scene && scene.jump(n)
   };
 
@@ -162,13 +162,13 @@
     clearInterval(attractTimer);
     lang = attractLang; flow.setLang(lang); paintChrome();
     document.body.classList.add('flying');
-    sound('fly');
-    await world.fly(1750);
-    const fl = $('flash'); fl.classList.add('on');
+    sound('rise');
+    const moved = world.handoff(1500);
+    await new Promise(r => setTimeout(r, 420));
+    setStage('welcome'); // the phone starts rising as the emblem sinks
+    await moved;
     world.jump('welcome');
-    setStage('welcome');
     document.body.classList.remove('flying');
-    setTimeout(() => fl.classList.remove('on'), 90);
     busy = false; arm();
   }
 
@@ -202,9 +202,9 @@
   }
 
   /* ---- QR ---- */
-  function renderQr() {
+  function qrSvg(url) {
     const qr = window.qrcode(0, 'H');
-    qr.addData(cfg.qrUrl); qr.make();
+    qr.addData(url); qr.make();
     const n = qr.getModuleCount(), q = 4, size = n + q * 2;
     const inFinder = (r, c) => (r < 7 && c < 7) || (r < 7 && c >= n - 7) || (r >= n - 7 && c < 7);
     // Clear room for the emblem in the middle; level H recovers the covered modules.
@@ -216,13 +216,19 @@
       const x = c + q, y = r + q;
       d += `M${x + .1} ${y + .5}a.4 .4 0 0 1 .8 0a.4 .4 0 0 1-.8 0`;
     }
-    const finder = (x, y) => `<rect x="${x + .5}" y="${y + .5}" width="6" height="6" rx="1.700" fill="none" stroke="#00643E"/><rect x="${x + 2}" y="${y + 2}" width="3" height="3" rx=".800" fill="#00643E"/>`;
+    const finder = (x, y) => `<rect x="${x + .5}" y="${y + .5}" width="6" height="6" rx="1.7" fill="none" stroke="#00643E"/><rect x="${x + 2}" y="${y + 2}" width="3" height="3" rx=".8" fill="#00643E"/>`;
     const m = (n - hole) / 2 + q;
-    $('qr').innerHTML = `<svg viewBox="0 0 ${size} ${size}" role="img" aria-label="QR code" data-url="${cfg.qrUrl.replace(/"/g, '&quot;')}">
+    return `<svg viewBox="0 0 ${size} ${size}" role="img" aria-label="QR code" data-url="${url.replace(/"/g, '&quot;')}">
       <rect width="${size}" height="${size}" fill="#fff"/><path d="${d}" fill="#00643E"/>
       ${finder(q, q)}${finder(q + n - 7, q)}${finder(q, q + n - 7)}
-      <svg x="${m + .6}" y="${m + .6}" width="${hole - 1.200}" height="${hole - 1.200}" viewBox="171 5 50 55"><defs>${GOLD.replace('nbeGold', 'nbeGoldQ')}</defs>${MARK.replace(/nbeGold/g, 'nbeGoldQ').replace('class="m-arch"', 'fill="#006241"')}</svg>
+      <svg x="${m + .6}" y="${m + .6}" width="${hole - 1.2}" height="${hole - 1.2}" viewBox="171 5 50 55"><defs>${GOLD.replace('nbeGold', 'nbeGoldQ')}</defs>${MARK.replace(/nbeGold/g, 'nbeGoldQ').replace('class="m-arch"', 'fill="#006241"')}</svg>
     </svg>`;
+  }
+  function renderQr() {
+    const smart = (cfg.smartLinkUrl || '').trim();
+    const codes = smart ? [{ url: smart }] : [{ url: cfg.appStoreUrl, label: 'App Store' }, { url: cfg.playStoreUrl, label: 'Google Play' }];
+    $('qrRow').classList.toggle('single', !!smart);
+    $('qrRow').innerHTML = codes.map(c => `<figure class="qr-frame"><i class="c tl"></i><i class="c tr"></i><i class="c bl"></i><i class="c br"></i><div class="qr">${qrSvg(c.url)}</div><div class="beam"></div>${c.label ? `<figcaption>${c.label}</figcaption>` : ''}</figure>`).join('');
   }
 
   /* ---- inactivity ---- */
@@ -283,7 +289,7 @@
   $('logo').addEventListener('pointerdown', () => { holdT = setTimeout(openAdmin, 3000); });
   ['pointerup', 'pointerleave', 'pointercancel'].forEach(ev => $('logo').addEventListener(ev, () => clearTimeout(holdT)));
   function openAdmin() {
-    $('aQr').value = cfg.qrUrl; $('aIdle').value = cfg.idleSeconds; $('aCount').value = cfg.idleCountdownSeconds;
+    $('aApple').value = cfg.appStoreUrl; $('aPlay').value = cfg.playStoreUrl; $('aSmart').value = cfg.smartLinkUrl || ''; $('aIdle').value = cfg.idleSeconds; $('aCount').value = cfg.idleCountdownSeconds;
     $('aDone').value = cfg.completionSeconds; $('aVol').value = cfg.soundVolume; $('aLang').value = cfg.defaultLang;
     $('admin').classList.add('on'); clearTimeout(idleT);
   }
@@ -291,7 +297,7 @@
   $('aReset').addEventListener('click', () => { try { localStorage.removeItem(STORE); } catch (e) {} cfg = Object.assign({}, defaults); openAdmin(); });
   $('admin').addEventListener('submit', e => {
     e.preventDefault();
-    const saved = { qrUrl: $('aQr').value.trim(), idleSeconds: +$('aIdle').value, idleCountdownSeconds: +$('aCount').value, completionSeconds: +$('aDone').value, soundVolume: +$('aVol').value, defaultLang: $('aLang').value };
+    const saved = { appStoreUrl: $('aApple').value.trim(), playStoreUrl: $('aPlay').value.trim(), smartLinkUrl: $('aSmart').value.trim(), idleSeconds: +$('aIdle').value, idleCountdownSeconds: +$('aCount').value, completionSeconds: +$('aDone').value, soundVolume: +$('aVol').value, defaultLang: $('aLang').value };
     Object.assign(cfg, saved);
     try { localStorage.setItem(STORE, JSON.stringify(saved)); } catch (err) {}
     $('admin').classList.remove('on');

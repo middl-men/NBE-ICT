@@ -10,7 +10,7 @@ window.NBE_I18N = {
     trackHint: "Tap what glows", trackDemo: "Demo only. Nothing is saved.",
     doneL1: "That’s all", doneL2: "it takes.",
     doneSub: "Now do it for real on NBE Mobile.",
-    doneScan: "Scan with your phone",
+    doneScan: "Scan to download NBE Mobile",
     restart: "Start over", exit: "Exit", langSwitch: "العربية",
     idleTitle: "Still there?", idleSub: "Touch to continue",
     // In-phone copy, as designed
@@ -62,7 +62,7 @@ window.NBE_I18N = {
     trackHint: "المس ما يضيء", trackDemo: "تجربة توضيحية. لا يتم حفظ أي بيانات.",
     doneL1: "هذا كل", doneL2: "ما في الأمر.",
     doneSub: "والآن جرّبها فعلياً على NBE Mobile.",
-    doneScan: "امسح الرمز بهاتفك",
+    doneScan: "امسح الرمز لتنزيل NBE Mobile",
     restart: "ابدأ من جديد", exit: "خروج", langSwitch: "English",
     idleTitle: "هل ما زلت هنا؟", idleSub: "المس للمتابعة",
     p: {

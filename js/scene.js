@@ -213,16 +213,6 @@ window.NBEScene = (function () {
     }));
     dust.frustumCulled = false; scene.add(dust);
 
-    /* Warp streaks for the flight through the gate */
-    const SN = 260, sp = new Float32Array(SN * 6);
-    for (let i = 0; i < SN; i++) {
-      const a = Math.random() * 6.283, r = 1.1 + Math.random() * 6, z = -Math.random() * 40;
-      sp.set([Math.cos(a) * r, Math.sin(a) * r, z, Math.cos(a) * r, Math.sin(a) * r, z - 1.5 - Math.random() * 3], i * 6);
-    }
-    const sg = new T.BufferGeometry(); sg.setAttribute('position', new T.BufferAttribute(sp, 3));
-    const streakMat = new T.LineBasicMaterial({ color: 0xffd28a, transparent: true, opacity: 0, blending: T.AdditiveBlending, depthWrite: false, toneMapped: false });
-    const streaks = new T.LineSegments(sg, streakMat); streaks.frustumCulled = false; scene.add(streaks);
-
     /* Celebration */
     const CN = 340;
     const confetti = new T.InstancedMesh(new T.PlaneGeometry(.13, .07), new T.MeshBasicMaterial({ side: T.DoubleSide, toneMapped: false }), CN);
@@ -259,19 +249,19 @@ window.NBEScene = (function () {
       if (!flying) for (const k in target) pose[k] = damp(pose[k], target[k], rate, dt);
 
       if (flying) {
+        // The emblem opens and sinks while the phone rises to take its place.
         const u = Math.min((time - flying.t0) / flying.dur, 1);
-        const open = easeInOut(Math.min(u / .42, 1));
-        const go = easeIn(Math.max(0, (u - .2) / .8));
-        pose.split = open * 1.25;
-        pose.camZ = 14 - go * 18;
-        pose.camY = pose.emY * go;
-        pose.sway = damp(pose.sway, 0, 7, dt);
-        pose.energy = .85 + go * .6;
-        streakMat.opacity = go * .9;
-        bgU.warp.value = go;
-        lift += dt * (1 + go * 22);
-        streaks.position.z = (time * 26) % 18 + camera.position.z - 14;
-        if (u >= 1) { const r = flying.done; flying = null; streakMat.opacity = 0; pose.camZ = 14; pose.camY = 0; r(); }
+        const open = easeInOut(Math.min(u / .45, 1));
+        const sink = easeIn(Math.max(0, (u - .18) / .82));
+        pose.split = open * 1.2;
+        pose.emY = flying.y0 + (POSES.welcome.emY - flying.y0) * sink;
+        pose.sway = damp(pose.sway, 0, 5, dt);
+        pose.reflect = damp(pose.reflect, 0, 7, dt);
+        pose.energy = damp(pose.energy, POSES.welcome.energy, 2.5, dt);
+        pose.gold = damp(pose.gold, POSES.welcome.gold, 2.5, dt);
+        bgU.warp.value = Math.sin(u * Math.PI) * .22;
+        lift += dt * (.05 + Math.sin(u * Math.PI) * 2.4);
+        if (u >= 1) { const r = flying.done; flying = null; Object.assign(pose, POSES.welcome); target = POSES.welcome; r(); }
       } else {
         bgU.warp.value = damp(bgU.warp.value, 0, 3, dt);
         lift += dt * .05;
@@ -345,11 +335,10 @@ window.NBEScene = (function () {
         target = POSES[name]; rate = speed || 1.6;
         if (name === 'done') { spin = Math.PI * 4; }
       },
-      /* The gate opens, and the camera flies through it. */
-      fly(dur) {
+      /* The gate opens and sinks away, handing the stage to the phone. */
+      handoff(dur) {
         return new Promise(res => {
-          for (const k in POSES.attract) pose[k] = pose[k];
-          flying = { t0: time, dur: (dur || 1800) / 1000, done: res };
+          flying = { t0: time, dur: (dur || 1500) / 1000, y0: pose.emY, done: res };
         });
       },
       jump(name) { Object.assign(pose, POSES[name]); target = POSES[name]; },
