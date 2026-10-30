@@ -107,7 +107,6 @@
     $('trackHint').textContent = t.trackHint;
     $('trackDemo').textContent = t.trackDemo;
     $('doneTitle').innerHTML = lines(t.doneL1, t.doneL2);
-    $('doneSub').textContent = t.doneSub;
     $('doneScan').textContent = t.doneScan;
     $('restartLabel').textContent = t.restart;
     $('idleTitle').textContent = t.idleTitle;
